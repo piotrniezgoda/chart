@@ -1,0 +1,28 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.chart-container {
+ height: 30em;
+ width: 70vw;
+ position: relative;
+ margin: 0 auto;
+}
+
+.container {
+  height: 100vh;
+  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column wrap;
+}
+
+.label {
+
+}
+
+.inputField {
+  width: 40px;
+}
