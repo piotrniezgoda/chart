@@ -21,25 +21,11 @@
               <label class="loginLabel" for="password">Password: </label>
               <input class="loginField" type="password" id="password" required>
               <button class="loginButton" id="loginSubmit">Login</button>
+
           </form>
+          <button class="logoutButton logoutButton--hidden" id="logoutBtn">Logout</button>
     </div>
-    <div class="addData-container">
-      <form class="addData-form" action="">
-        <div>
-            <label class="addData-label" for="wins">Wins:</label>
-            <input class="addData-inputField" type="number" id="wins" required>
-        </div>
-        <div>
-            <label class="addData-label" for="losses">Losses:</label>
-            <input class="addData-inputField" type="number" id="losses" required>
-        </div>
-        <div>
-            <label class="addData-label" for="date">Date:</label>
-            <input class="addData-inputField addData-dateInput" type="date" id="date">
-        </div>
-        <button class="addData-submitBtn" id="submitBtn" type="submit">add</button>
-      </form>
-    </div>
+    <div id="loginUserContent"></div>
       <div class="chart-container">
           <canvas id="dataChart"></canvas>
       </div>

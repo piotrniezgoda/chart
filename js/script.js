@@ -1,12 +1,12 @@
 
 const app = (function() {
-  const winsInput = document.querySelector('#wins');
-  const lossesInput = document.querySelector('#losses');
-  const dateInput = document.querySelector('#date');
-  const submitBtn = document.querySelector('#submitBtn');
   const loginBtn = document.querySelector("#loginSubmit");
+  const logoutBtn = document.querySelector("#logoutBtn");
+  let btnDisableFlag = false;
+  let secNum = 0;
 
   const init = function() {
+    const loginForm = document.querySelector('.login-form');
     //const ctx = document.getElementById("dataChart").getContext('2d');
     var config = {
       apiKey: "AIzaSyAqHZMs6maStsVvUmBytYVLDxEGguiB5Jw",
@@ -17,20 +17,14 @@ const app = (function() {
       messagingSenderId: "76656519157"
     };
     firebase.initializeApp(config);
-    submitBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const wins = winsInput.value;
-      const losses = lossesInput.value;
-      const date = dateInput.value;
-      addToDatabase(wins, losses, date);
-    })
+    firebase.auth().signOut();
 
     loginBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      const userLogin = document.querySelector('#username').value;
-      const userPassword = document.querySelector('#password').value;
+      let userLogin = document.querySelector('#username');
+      let userPassword = document.querySelector('#password');
 
-      firebase.auth().signInWithEmailAndPassword(userLogin, userPassword).catch(function(error) {
+      firebase.auth().signInWithEmailAndPassword(userLogin.value, userPassword.value).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -38,10 +32,127 @@ const app = (function() {
         console.log(errorMessage)
         // ...
       });
+      userLogin.value = '';
+      userPassword.value = '';
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          secNum += 1;
+          btnDisableFlag = true;
+        if(btnDisableFlag && secNum == 1) {
+          loginBtn.disabled = true;
+          loginForm.classList.add('login-form--hidden');
+          generateUserContent(loginForm);
+          console.log(loginForm)
+          logoutBtn.classList.remove('logoutButton--hidden');
+        }
 
+          // var displayName = user.displayName;
+          // var email = user.email;
+          // var emailVerified = user.emailVerified;
+          // var photoURL = user.photoURL;
+          // var isAnonymous = user.isAnonymous;
+          // var uid = user.uid;
+          // var providerData = user.providerData;
+        } else {
+          return;
+        }
+      });
     })
     setTimeout(1000, renderChart())
-    //renderChart()
+  }
+
+  const generateUserContent = function(loginForm) {
+    const container = document.querySelector('#loginUserContent');
+
+    //create form
+    const form = document.createElement('form');
+    form.classList.add('addData-form');
+    form.setAttribute('action', '');
+
+    //create wins row
+    const div1 = document.createElement('div');
+    const winsLabel = document.createElement('label');
+    const winsInput = document.createElement('input');
+    winsLabel.classList.add('addData-label');
+    winsLabel.setAttribute('for', 'wins');
+    winsLabel.textContent = 'Wins:';
+    winsInput.classList.add('addData-inputField');
+    winsInput.setAttribute('type', 'number');
+    winsInput.setAttribute('required', '');
+    winsInput.setAttribute('id', 'wins');
+    div1.appendChild(winsLabel);
+    div1.appendChild(winsInput);
+
+    //create losses row
+    const div2 = document.createElement('div');
+    const lossesLabel = document.createElement('label');
+    const lossesInput = document.createElement('input');
+    lossesLabel.classList.add('addData-label');
+    lossesLabel.setAttribute('for', 'losses');
+    lossesLabel.textContent = 'Losses:';
+    lossesInput.classList.add('addData-inputField');
+    lossesInput.setAttribute('type', 'number');
+    lossesInput.setAttribute('required', '');
+    lossesInput.setAttribute('id', 'losses');
+    div2.appendChild(lossesLabel);
+    div2.appendChild(lossesInput);
+
+    //create date row
+    const div3 = document.createElement('div');
+    const dateLabel = document.createElement('label');
+    const dateInput = document.createElement('input');
+    dateLabel.classList.add('addData-label');
+    dateLabel.setAttribute('for', 'date');
+    dateLabel.textContent = 'Date:';
+    dateInput.classList.add('addData-inputField', 'addData-dateInput');
+    dateInput.setAttribute('type', 'date');
+    dateInput.setAttribute('id', 'date');
+    div3.appendChild(dateLabel);
+    div3.appendChild(dateInput);
+
+    //create add button
+    const btn = document.createElement('button');
+    btn.classList.add('addData-submitBtn');
+    btn.setAttribute('id', 'submitBtn');
+    btn.setAttribute('type', 'submit');
+    btn.textContent = 'add';
+
+
+    //add row divs & buton to form
+    form.appendChild(div1);
+    form.appendChild(div2);
+    form.appendChild(div3);
+    form.appendChild(btn);
+
+
+    //render form to container
+    container.classList.add('addData-container');
+    container.classList.add('addData-container--show');
+    container.appendChild(form);
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const wins = winsInput.value;
+        const losses = lossesInput.value;
+        const date = dateInput.value;
+        addToDatabase(wins, losses, date);
+        winsInput.value = '';
+        lossesInput.value = '';
+        dateInput.value = '';
+      })
+
+      logoutBtn.addEventListener('click', ()=> {
+        firebase.auth().signOut();
+        secNum = 0;
+        btnDisableFlag = false;
+        if(!btnDisableFlag && secNum == 0) {
+          loginBtn.disabled = false;
+          loginForm.classList.remove('login-form--hidden');
+          logoutBtn.classList.add('logoutButton--hidden');
+          container.classList.remove('addData-container--show');
+        }
+        //window.location.reload();
+      })
 
   }
 
@@ -91,7 +202,6 @@ const app = (function() {
     let matches = firebase.database().ref('matches/');
     matches.once('value', function(snapshot) {
       let allMatches = snapshot.val();
-      console.log(allMatches)
       let id = 0;
        for(match in allMatches) {
         id += 1;
@@ -107,7 +217,6 @@ const app = (function() {
   }
 
   const chartData = function(matchStats) {
-    console.log(matchStats.ratioArray)
   const ctx = document.getElementById("dataChart").getContext('2d');
   var myChart = new Chart(ctx, {
     type: 'line',
@@ -192,7 +301,5 @@ const app = (function() {
   }
 
 })()
-
-
 
 app.init();
