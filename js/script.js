@@ -2,7 +2,9 @@
 const app = (function() {
   const winsInput = document.querySelector('#wins');
   const lossesInput = document.querySelector('#losses');
+  const dateInput = document.querySelector('#date');
   const submitBtn = document.querySelector('#submitBtn');
+  const loginBtn = document.querySelector("#loginSubmit");
 
   const init = function() {
     //const ctx = document.getElementById("dataChart").getContext('2d');
@@ -19,7 +21,24 @@ const app = (function() {
       e.preventDefault();
       const wins = winsInput.value;
       const losses = lossesInput.value;
-      addToDatabase(wins, losses);
+      const date = dateInput.value;
+      addToDatabase(wins, losses, date);
+    })
+
+    loginBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const userLogin = document.querySelector('#username').value;
+      const userPassword = document.querySelector('#password').value;
+
+      firebase.auth().signInWithEmailAndPassword(userLogin, userPassword).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode)
+        console.log(errorMessage)
+        // ...
+      });
+
     })
     setTimeout(1000, renderChart())
     //renderChart()
@@ -30,7 +49,7 @@ const app = (function() {
     getDatabaseData();
   }
 
-  const addToDatabase = function(wins, losses) {
+  const addToDatabase = function(wins, losses, date) {
     let ratio = 0;
 
     if(wins > 0 && losses == 0) {
@@ -55,6 +74,7 @@ const app = (function() {
       wins: wins,
       losses: losses,
       ratio: ratio,
+      date: date,
     });
 
     getDatabaseData();
@@ -65,6 +85,7 @@ const app = (function() {
       ratioArray: [],
       wins: [],
       losses: [],
+      date: [],
       id: [],
     }
     let matches = firebase.database().ref('matches/');
@@ -78,6 +99,7 @@ const app = (function() {
         matchStats.ratioArray.push(allMatches[matchID].ratio);
         matchStats.wins.push(allMatches[matchID].wins);
         matchStats.losses.push(allMatches[matchID].losses);
+        matchStats.date.push(allMatches[matchID].date);
         matchStats.id.push(id);
       }
       chartData(matchStats)
@@ -96,10 +118,10 @@ const app = (function() {
             label: 'Win/Loss Ratio',
             data: matchStats.ratioArray,
             backgroundColor: [
-                'rgba(25, 205, 255, 0.3)',
+                'rgba(0, 246, 255,0.7)',
             ],
             borderColor: [
-                'rgb(0, 114, 255)',
+                'rgb(17, 97, 224)',
             ],
             borderWidth: 2,
             fill: 'origin'
@@ -113,8 +135,19 @@ const app = (function() {
             yAxes: [{
                 ticks: {
                     beginAtZero:true,
-                }
-            }]
+                },
+                gridLines: {
+                  color: "#4c4c4c"
+                },
+            }],
+            xAxes: [{
+              ticks: {
+                  beginAtZero:true,
+              },
+              gridLines: {
+                color: "#4c4c4c"
+              },
+          }]
         },
         legend: {
           display: false,
@@ -146,7 +179,7 @@ const app = (function() {
             return;
           },
           footer: function(t, d) {
-            return ['Wins: ' + matchStats.wins[t[0].index], 'Loss: ' + matchStats.losses[t[0].index]]; //return a string that you wish to append
+            return ['Wins: ' + matchStats.wins[t[0].index], 'Loss: ' + matchStats.losses[t[0].index], 'Date: ' + matchStats.date[t[0].index]];
          }
         }
     }

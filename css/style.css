@@ -3,6 +3,10 @@ html, body {
   padding: 0;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .chart-container {
  height: 30em;
  width: 70vw;
@@ -12,17 +16,161 @@ html, body {
 
 .container {
   height: 100vh;
-  background: #eee;
+  background: linear-gradient(rgba(0,0,0,0.79), rgba(0,0,0,0.85)), url('../img/app-bg.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
+  position: relative;
 }
 
-.label {
 
+
+.addData-label {
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+  margin: 0 5px 0 5px;
+  font-size: 0.9rem;
 }
 
-.inputField {
+.addData-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.addData-form > div {
+  margin: 5px 0;
+}
+
+
+.addData-inputField {
   width: 40px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #fff;
+  color: #fff;
+}
+
+.addData-inputField:focus {
+  background: rgba(255, 255, 255, 0.171);
+}
+
+.addData-inputField:required {
+  border-bottom-color: rgb(145, 236, 145);
+}
+
+.addData-inputField:invalid {
+  border-bottom-color: rgb(231, 94, 79);
+}
+
+.addData-submitBtn {
+  background: transparent;
+  border: 1px solid #fff;
+  margin: 20px 0 0 0;
+  color: #fff;
+  font-size: 1em;
+  padding: 6px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.addData-submitBtn:hover {
+  background: rgba(255, 255, 255, 0.171);
+}
+
+.addData-submitBtn:focus {
+  background: rgba(255, 255, 255, 0.301);
+}
+
+.addData-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(107, 107, 107, 0.6);
+  padding: 15px 30px;
+  width: 100%;
+  max-width: 40em;
+  margin: 0 auto 25px auto;
+}
+
+.addData-dateInput {
+  width: auto;
+  border-bottom-color: rgb(222, 236, 145);
+}
+
+.addData-dateInput:focus {
+  background: rgba(255, 255, 255, 0.171);
+}
+
+.addData-dateInput:invalid {
+  border-bottom-color: rgb(231, 94, 79);
+}
+
+.login-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 15px 25px 0 0;
+}
+
+.login-form {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.loginLabel {
+  color: #fff;
+  align-self: flex-start;
+  font-family: 'Roboto', sans-serif;
+  margin: 10px 0 5px 0;
+  font-size: 0.8em;
+}
+
+.loginField {
+  background: transparent;
+  border: none;
+  height: 2em;
+  color: #fff;
+  padding: 0 10px;
+  border-bottom: 1px solid #eee;
+  transition: border-color .5s ease-out;
+  outline: none;
+}
+
+.loginField:focus {
+  background: rgba(255, 255, 255, 0.171);
+}
+
+.loginForm input:required {
+  border-bottom-color: rgb(145, 236, 145);
+}
+
+.loginForm input:invalid {
+  border-bottom-color: rgb(231, 94, 79);
+}
+
+.loginButton {
+  background: transparent;
+  border: 1px solid #fff;
+  margin: 20px 0 0 0;
+  color: #fff;
+  font-size: 1em;
+  padding: 6px 20px;
+  cursor: pointer;
+}
+
+.loginButton:hover {
+  background: rgba(255, 255, 255, 0.171);
+}
+
+.loginButton:focus {
+  background: rgba(255, 255, 255, 0.301);
 }
