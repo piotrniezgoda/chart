@@ -45,7 +45,7 @@ const app = (function() {
         if(userLogin && secNum == 1) {
           loginBtn.disabled = true;
           loginForm.classList.add('login-form--hidden');
-          loginContainer.classList.add('login-containergit status--moved');
+          loginContainer.classList.add('login-container--moved');
           generateUserContent(loginForm);
           logoutBtn.classList.remove('logoutButton--hidden');
         }
