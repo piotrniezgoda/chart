@@ -2,11 +2,14 @@
 const app = (function() {
   const loginBtn = document.querySelector("#loginSubmit");
   const logoutBtn = document.querySelector("#logoutBtn");
-  let btnDisableFlag = false;
+  const errorMessageSpan = document.querySelector('#errorMessage');
   let secNum = 0;
+  let userLogin = false;
 
   const init = function() {
+    console.log('%c Welcome in ratio chart app, usually developers use this part of browser... are you?', 'background: #222; color: #bada55');
     const loginForm = document.querySelector('.login-form');
+    const loginContainer = document.querySelector('#loginContainer');
     //const ctx = document.getElementById("dataChart").getContext('2d');
     var config = {
       apiKey: "AIzaSyAqHZMs6maStsVvUmBytYVLDxEGguiB5Jw",
@@ -26,23 +29,24 @@ const app = (function() {
 
       firebase.auth().signInWithEmailAndPassword(userLogin.value, userPassword.value).catch(function(error) {
         // Handle Errors here.
-        var errorCode = error.code;
+        //var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(errorCode)
+        //console.log(errorCode)
         console.log(errorMessage)
+        errorMessageSpan.textContent = errorMessage;
         // ...
       });
       userLogin.value = '';
       userPassword.value = '';
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+          userLogin = true;
           secNum += 1;
-          btnDisableFlag = true;
-        if(btnDisableFlag && secNum == 1) {
+        if(userLogin && secNum == 1) {
           loginBtn.disabled = true;
           loginForm.classList.add('login-form--hidden');
+          loginContainer.classList.add('login-container--moved');
           generateUserContent(loginForm);
-          console.log(loginForm)
           logoutBtn.classList.remove('logoutButton--hidden');
         }
 
@@ -80,6 +84,7 @@ const app = (function() {
     winsInput.setAttribute('type', 'number');
     winsInput.setAttribute('required', '');
     winsInput.setAttribute('id', 'wins');
+    winsInput.setAttribute('min', '0');
     div1.appendChild(winsLabel);
     div1.appendChild(winsInput);
 
@@ -94,6 +99,7 @@ const app = (function() {
     lossesInput.setAttribute('type', 'number');
     lossesInput.setAttribute('required', '');
     lossesInput.setAttribute('id', 'losses');
+    lossesInput.setAttribute('min', '0');
     div2.appendChild(lossesLabel);
     div2.appendChild(lossesInput);
 
@@ -134,8 +140,10 @@ const app = (function() {
         e.preventDefault();
         const wins = winsInput.value;
         const losses = lossesInput.value;
-        const date = dateInput.value;
-        addToDatabase(wins, losses, date);
+        const date = dateInput.value || setCurrentDate();
+        const winsInt = parseInt(wins, 10);
+        const lossesInt = parseInt(losses, 10);
+        addToDatabase(winsInt, lossesInt, date);
         winsInput.value = '';
         lossesInput.value = '';
         dateInput.value = '';
@@ -144,16 +152,16 @@ const app = (function() {
       logoutBtn.addEventListener('click', ()=> {
         firebase.auth().signOut();
         secNum = 0;
-        btnDisableFlag = false;
-        if(!btnDisableFlag && secNum == 0) {
+        userLogin = false;
+        if(!userLogin && secNum == 0) {
           loginBtn.disabled = false;
           loginForm.classList.remove('login-form--hidden');
+          loginContainer.classList.remove('login-container--moved');
           logoutBtn.classList.add('logoutButton--hidden');
           container.classList.remove('addData-container--show');
         }
-        //window.location.reload();
+        window.location.reload();
       })
-
   }
 
   const renderChart = function() {
@@ -164,11 +172,11 @@ const app = (function() {
     let ratio = 0;
 
     if(wins > 0 && losses == 0) {
-      ratio = wins;
+      ratio = 100;
     }
 
     if(wins > 0 && losses > 0) {
-      ratio = (wins / losses).toFixed(2);
+      ratio = ((wins * 100) / (wins + losses)).toFixed(2);
     }
 
     if(wins == 0 && losses > 0) {
@@ -216,6 +224,11 @@ const app = (function() {
     });
   }
 
+  const setCurrentDate = function() {
+    const today = new Date();
+    return today.toISOString().substr(0,10);
+  }
+
   const chartData = function(matchStats) {
   const ctx = document.getElementById("dataChart").getContext('2d');
   var myChart = new Chart(ctx, {
@@ -224,7 +237,7 @@ const app = (function() {
         labels: matchStats.id,
         datasets: [
           {
-            label: 'Win/Loss Ratio',
+            label: 'Total wins %',
             data: matchStats.ratioArray,
             backgroundColor: [
                 'rgba(0, 246, 255,0.7)',

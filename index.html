@@ -14,13 +14,14 @@
 </head>
 <body>
   <div class="container">
-    <div class="login-container">
+    <div id="loginContainer" class="login-container">
         <form class="login-form" action="">
             <label class="loginLabel" for="username">Username: </label>
               <input class="loginField" type="text" id="username" required>
               <label class="loginLabel" for="password">Password: </label>
               <input class="loginField" type="password" id="password" required>
               <button class="loginButton" id="loginSubmit">Login</button>
+              <span class="errorMessage" id="errorMessage"></span>
 
           </form>
           <button class="logoutButton logoutButton--hidden" id="logoutBtn">Logout</button>

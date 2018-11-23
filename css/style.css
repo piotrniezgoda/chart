@@ -14,6 +14,13 @@ html, body {
  margin: 0 auto;
 }
 
+@media (max-width: 1024px) {
+  .chart-container {
+    height: auto;
+    width: auto;
+  }
+}
+
 .container {
   height: 100vh;
   background: linear-gradient(rgba(0,0,0,0.79), rgba(0,0,0,0.85)), url('../img/app-bg.jpg');
@@ -27,6 +34,11 @@ html, body {
   position: relative;
 }
 
+@media (max-width: 1024px) {
+  .container {
+    justify-content: space-around;
+  }
+}
 
 
 .addData-label {
@@ -97,11 +109,10 @@ html, body {
   width: 100%;
   max-width: 40em;
   margin: 0 auto 25px auto;
-  position: absolute;
+  position: relative;
   top: -1000px;
-  left: 50%;
-  transform: translateX(-50%);
   transition: 0.6s;
+  align-self: flex-start;
 }
 
 .addData-container--show {
@@ -127,6 +138,12 @@ html, body {
   top: 0;
   right: 0;
   padding: 15px 25px 0 0;
+  max-width: 216px;
+  transition: 0.4s;
+}
+.login-container--moved {
+  top: -180px;
+  transition: 0.4s;
 }
 
 .login-form {
@@ -140,6 +157,7 @@ html, body {
 .login-form--hidden {
   visibility: hidden;
   transition: 0.4s;
+  transform: trnalsateY(-200px);
 }
 
 .loginLabel {
@@ -207,4 +225,10 @@ html, body {
 .logoutButton--hidden {
   visibility: hidden;
   transition: 0.4s;
+}
+
+.errorMessage {
+  color: rgb(151, 21, 21);
+  font-size: 1rem;
+  text-align: center;
 }
