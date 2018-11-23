@@ -139,6 +139,11 @@ html, body {
   right: 0;
   padding: 15px 25px 0 0;
   max-width: 216px;
+  transition: 0.4s;
+}
+.login-container--moved {
+  top: -180px;
+  transition: 0.4s;
 }
 
 .login-form {
@@ -152,6 +157,7 @@ html, body {
 .login-form--hidden {
   visibility: hidden;
   transition: 0.4s;
+  transform: trnalsateY(-200px);
 }
 
 .loginLabel {

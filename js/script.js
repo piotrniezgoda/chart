@@ -3,12 +3,13 @@ const app = (function() {
   const loginBtn = document.querySelector("#loginSubmit");
   const logoutBtn = document.querySelector("#logoutBtn");
   const errorMessageSpan = document.querySelector('#errorMessage');
-  let btnDisableFlag = false;
   let secNum = 0;
+  let userLogin = false;
 
   const init = function() {
     console.log('%c Welcome in ratio chart app, usually developers use this part of browser... are you?', 'background: #222; color: #bada55');
     const loginForm = document.querySelector('.login-form');
+    const loginContainer = document.querySelector('#loginContainer');
     //const ctx = document.getElementById("dataChart").getContext('2d');
     var config = {
       apiKey: "AIzaSyAqHZMs6maStsVvUmBytYVLDxEGguiB5Jw",
@@ -39,11 +40,12 @@ const app = (function() {
       userPassword.value = '';
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
+          userLogin = true;
           secNum += 1;
-          btnDisableFlag = true;
-        if(btnDisableFlag && secNum == 1) {
+        if(userLogin && secNum == 1) {
           loginBtn.disabled = true;
           loginForm.classList.add('login-form--hidden');
+          loginContainer.classList.add('login-containergit status--moved');
           generateUserContent(loginForm);
           logoutBtn.classList.remove('logoutButton--hidden');
         }
@@ -138,7 +140,7 @@ const app = (function() {
         e.preventDefault();
         const wins = winsInput.value;
         const losses = lossesInput.value;
-        const date = dateInput.value;
+        const date = dateInput.value || setCurrentDate();
         const winsInt = parseInt(wins, 10);
         const lossesInt = parseInt(losses, 10);
         addToDatabase(winsInt, lossesInt, date);
@@ -150,16 +152,16 @@ const app = (function() {
       logoutBtn.addEventListener('click', ()=> {
         firebase.auth().signOut();
         secNum = 0;
-        btnDisableFlag = false;
-        if(!btnDisableFlag && secNum == 0) {
+        userLogin = false;
+        if(!userLogin && secNum == 0) {
           loginBtn.disabled = false;
           loginForm.classList.remove('login-form--hidden');
+          loginContainer.classList.remove('login-container--moved');
           logoutBtn.classList.add('logoutButton--hidden');
           container.classList.remove('addData-container--show');
         }
         window.location.reload();
       })
-
   }
 
   const renderChart = function() {
@@ -220,6 +222,11 @@ const app = (function() {
       }
       chartData(matchStats)
     });
+  }
+
+  const setCurrentDate = function() {
+    const today = new Date();
+    return today.toISOString().substr(0,10);
   }
 
   const chartData = function(matchStats) {
